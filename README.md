@@ -50,6 +50,8 @@ This is a test ~senctence~**for diffutils**.
 But it can easily replaced by any other which is better for handing your texts. I have plan to add implementation of some in future.
 
 ### Changelog ###
+  * Version 2.2
+    * Added chunk to support surroundings of differences
   * Version 2.0
     * switch to maven and removed other artifacts
     * changed groupid to **com.github.java-diff-utils** due to different forks at github

@@ -20,19 +20,20 @@ limitations under the License.
 package com.github.difflib.patch;
 
 import com.github.difflib.algorithm.Change;
-import static com.github.difflib.patch.DeltaType.DELETE;
-import static com.github.difflib.patch.DeltaType.INSERT;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import static java.util.Comparator.comparing;
 import java.util.List;
 import java.util.ListIterator;
+
+import static java.util.Comparator.comparing;
 
 /**
  * Describes the patch holding all deltas between the original and revised texts.
  *
+ * T The type of the compared elements in the 'lines'.
  * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
- * @param T The type of the compared elements in the 'lines'.
+ * @author <a href="ch.sontag@gmail.com">Christopher Sontag</a>
  */
 public final class Patch<T> {
 
@@ -41,11 +42,11 @@ public final class Patch<T> {
     public Patch() {
         this(10);
     }
-    
+
     public Patch(int estimatedPatchSize) {
-         deltas = new ArrayList<>(estimatedPatchSize);
+        deltas = new ArrayList<>(estimatedPatchSize);
     }
-    
+
     /**
      * Apply this patch to the given target
      *
@@ -87,26 +88,34 @@ public final class Patch<T> {
         deltas.add(delta);
     }
 
-    /** 
-     * Get the list of computed deltas
-     *
-     * @return the deltas
-     */
-    public List<Delta<T>> getDeltas() {
-        Collections.sort(deltas, comparing(d -> d.getOriginal().getPosition()));
-        return deltas;
-    }
-
-    @Override
-    public String toString() {
-        return "Patch{" + "deltas=" + deltas + '}';
-    }
-    
-    public static <T> Patch<T> generate(List<T> original, List<T> revised, List<Change> changes) {
+    public static <T> Patch<T> generate(List<T> original, List<T> revised, List<Change> changes, int surroundingLines) {
         Patch<T> patch = new Patch<>(changes.size());
         for (Change change : changes) {
+
             Chunk<T> orgChunk = new Chunk<>(change.startOriginal, new ArrayList<>(original.subList(change.startOriginal, change.endOriginal)));
+            if (change.startOriginal - surroundingLines >= 0) {
+                orgChunk.setBefore(new ArrayList<>(original.subList(change.startOriginal - surroundingLines, change.startOriginal)));
+            } else {
+                orgChunk.setBefore(new ArrayList<>(original.subList(0, change.startOriginal)));
+            }
+            if (change.endOriginal + surroundingLines <= original.size()) {
+                orgChunk.setAfter(new ArrayList<>(original.subList(change.endOriginal, change.endOriginal + surroundingLines)));
+            } else {
+                orgChunk.setAfter(new ArrayList<>(original.subList(change.endOriginal, original.size())));
+            }
+
             Chunk<T> revChunk = new Chunk<>(change.startRevised, new ArrayList<>(revised.subList(change.startRevised, change.endRevised)));
+            if (change.startRevised - surroundingLines >= 0) {
+                revChunk.setBefore(new ArrayList<>(revised.subList(change.startRevised - surroundingLines, change.startRevised)));
+            } else {
+                revChunk.setBefore(new ArrayList<>(revised.subList(0, change.startRevised)));
+            }
+            if (change.endRevised + surroundingLines <= revised.size()) {
+                revChunk.setAfter(new ArrayList<>(revised.subList(change.endRevised, change.endRevised + surroundingLines)));
+            } else {
+                revChunk.setAfter(new ArrayList<>(revised.subList(change.endRevised, revised.size())));
+            }
+
             switch (change.deltaType) {
                 case DELETE:
                     patch.addDelta(new DeleteDelta<>(orgChunk, revChunk));
@@ -120,5 +129,20 @@ public final class Patch<T> {
             }
         }
         return patch;
+    }
+
+    @Override
+    public String toString() {
+        return "Patch{" + "deltas=" + deltas + '}';
+    }
+
+    /**
+     * Get the list of computed deltas
+     *
+     * @return the deltas
+     */
+    public List<Delta<T>> getDeltas() {
+        Collections.sort(deltas, comparing(d -> d.getOriginal().getPosition()));
+        return deltas;
     }
 }

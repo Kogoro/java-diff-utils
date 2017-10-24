@@ -5,6 +5,7 @@ import com.github.difflib.TestConstants;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Delta;
 import com.github.difflib.patch.Patch;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ public class ComputeDifference {
         List<String> revised = Files.readAllLines(new File(RIVISED).toPath());
 
         // Compute diff. Get the Patch object. Patch is the container for computed deltas.
-        Patch<String> patch = DiffUtils.diff(original, revised);
+        Patch<String> patch = DiffUtils.diff(original, revised, 1);
 
         for (Delta<String> delta : patch.getDeltas()) {
             System.out.println(delta);

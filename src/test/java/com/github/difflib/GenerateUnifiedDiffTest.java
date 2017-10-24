@@ -1,10 +1,10 @@
 package com.github.difflib;
 
-import com.github.difflib.DiffUtils;
-import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.Test;
 
 public class GenerateUnifiedDiffTest {
 
@@ -48,7 +48,7 @@ public class GenerateUnifiedDiffTest {
     @Test
     public void testGenerateUnifiedDiffWithoutAnyDeltas() throws DiffException {
         List<String> test = Arrays.asList("abc");
-        Patch<String> patch = DiffUtils.diff(test, test);
+        Patch<String> patch = DiffUtils.diff(test, test, 1);
         UnifiedDiffUtils.generateUnifiedDiff("abc", "abc", test, patch, 0);
     }
 
@@ -100,7 +100,7 @@ public class GenerateUnifiedDiffTest {
         revised.add("test line 4");
         revised.add("test line 5");
 
-        Patch<String> patch = DiffUtils.diff(original, revised);
+        Patch<String> patch = DiffUtils.diff(original, revised, 1);
         List<String> udiff = UnifiedDiffUtils.generateUnifiedDiff("original", "revised",
                 original, patch, 10);
         UnifiedDiffUtils.parseUnifiedDiff(udiff);
@@ -108,7 +108,7 @@ public class GenerateUnifiedDiffTest {
 
     private void verify(List<String> origLines, List<String> revLines,
             String originalFile, String revisedFile) throws DiffException {
-        Patch<String> patch = DiffUtils.diff(origLines, revLines);
+        Patch<String> patch = DiffUtils.diff(origLines, revLines, 1);
         List<String> unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff(originalFile, revisedFile,
                 origLines, patch, 10);
 
