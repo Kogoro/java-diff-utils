@@ -21,14 +21,13 @@ package com.github.difflib.text;
 
 import com.github.difflib.DiffUtils;
 import com.github.difflib.algorithm.DiffException;
-import com.github.difflib.patch.ChangeDelta;
-import com.github.difflib.patch.Chunk;
-import com.github.difflib.patch.DeleteDelta;
-import com.github.difflib.patch.Delta;
-import com.github.difflib.patch.InsertDelta;
-import com.github.difflib.patch.Patch;
+import com.github.difflib.patch.*;
 import com.github.difflib.text.DiffRow.Tag;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -38,9 +37,9 @@ import java.util.regex.Pattern;
  * This class for generating DiffRows for side-by-sidy view. You can customize the way of generating. For example, show
  * inline diffs on not, ignoring white spaces or/and blank lines and so on. All parameters for generating are optional.
  * If you do not specify them, the class will use the default values.
- *
+ * <p>
  * These values are: showInlineDiffs = false; ignoreWhiteSpaces = true; ignoreBlankLines = true; ...
- *
+ * <p>
  * For instantiating the DiffRowGenerator you should use the its builder. Like in example  <code>
  *    DiffRowGenerator generator = new DiffRowGenerator.Builder().showInlineDiffs(true).
  *      ignoreWhiteSpaces(true).columnWidth(100).build();
@@ -63,123 +62,17 @@ public class DiffRowGenerator {
     private final boolean reportLinesUnchanged;
 
     /**
-     * This class used for building the DiffRowGenerator.
+     * Wrap the elements in the sequence with the given tag
      *
-     * @author dmitry
-     *
+     * @param sequence
+     * @param startPosition the position from which tag should start. The counting start from a zero.
+     * @param endPosition   the position before which tag should should be closed.
+     * @param generator
      */
-    public static class Builder {
-
-        private boolean showInlineDiffs = false;
-        private boolean ignoreWhiteSpaces = false;
-
-        private Function<Boolean, String> oldTag = f -> f ? "<span class=\"editOldInline\">" : "</span>";
-        private Function<Boolean, String> newTag = f -> f ? "<span class=\"editNewInline\">" : "</span>";
-
-        private int columnWidth = 0;
-        private boolean mergeOriginalRevised = false;
-        private boolean inlineDiffByWord = false;
-        private boolean reportLinesUnchanged = false;
-
-        private Builder() {
-        }
-
-        /**
-         * Show inline diffs in generating diff rows or not.
-         *
-         * @param val the value to set. Default: false.
-         * @return builder with configured showInlineDiff parameter
-         */
-        public Builder showInlineDiffs(boolean val) {
-            showInlineDiffs = val;
-            return this;
-        }
-
-        /**
-         * Ignore white spaces in generating diff rows or not.
-         *
-         * @param val the value to set. Default: true.
-         * @return builder with configured ignoreWhiteSpaces parameter
-         */
-        public Builder ignoreWhiteSpaces(boolean val) {
-            ignoreWhiteSpaces = val;
-            return this;
-        }
-
-        /**
-         * Give the originial old and new text lines to Diffrow without any additional processing.
-         *
-         * @param val the value to set. Default: false.
-         * @return builder with configured reportLinesUnWrapped parameter
-         */
-        public Builder reportLinesUnchanged(final boolean val) {
-            reportLinesUnchanged = val;
-            return this;
-        }
-
-        /**
-         * Generator for Old-Text-Tags.
-         *
-         * @param tag the tag to set. Without angle brackets. Default: span.
-         * @return builder with configured ignoreBlankLines parameter
-         */
-        public Builder oldTag(Function<Boolean, String> generator) {
-            this.oldTag = generator;
-            return this;
-        }
-
-        /**
-         * Generator for New-Text-Tags.
-         *
-         * @param generator
-         * @return
-         */
-        public Builder newTag(Function<Boolean, String> generator) {
-            this.newTag = generator;
-            return this;
-        }
-
-        /**
-         * Set the column with of generated lines of original and revised texts.
-         *
-         * @param width the width to set. Making it < 0 doesn't have any sense. Default 80. @return builder with config
-         * ured ignoreBlankLines parameter
-         */
-        public Builder columnWidth(int width) {
-            if (width >= 0) {
-                columnWidth = width;
-            }
-            return this;
-        }
-
-        /**
-         * Build the DiffRowGenerator. If some parameters is not set, the default values are used.
-         *
-         * @return the customized DiffRowGenerator
-         */
-        public DiffRowGenerator build() {
-            return new DiffRowGenerator(this);
-        }
-
-        /**
-         * Merge the complete result within the original text. This makes sense for one line display.
-         *
-         * @param mergeOriginalRevised
-         * @return
-         */
-        public Builder mergeOriginalRevised(boolean mergeOriginalRevised) {
-            this.mergeOriginalRevised = mergeOriginalRevised;
-            return this;
-        }
-
-        /**
-         * Per default each character is separatly processed. This variant introduces processing by word, which should
-         * deliver no in word changes.
-         */
-        public Builder inlineDiffByWord(boolean inlineDiffByWord) {
-            this.inlineDiffByWord = inlineDiffByWord;
-            return this;
-        }
+    public static void wrapInTag(List<String> sequence, int startPosition,
+                                 int endPosition, Function<Boolean, String> generator) {
+        sequence.add(startPosition, generator.apply(true));
+        sequence.add(endPosition, generator.apply(false));
     }
 
     public static Builder create() {
@@ -203,11 +96,11 @@ public class DiffRowGenerator {
      * displaying side-by-side diff.
      *
      * @param original the original text
-     * @param revised the revised text
+     * @param revised  the revised text
      * @return the DiffRows between original and revised texts
      */
     public List<DiffRow> generateDiffRows(List<String> original, List<String> revised) throws DiffException {
-        return generateDiffRows(original, DiffUtils.diff(original, revised, equalizer));
+        return generateDiffRows(original, DiffUtils.diff(original, revised, equalizer, 1));
     }
 
     private String preprocessLine(String line) {
@@ -251,8 +144,7 @@ public class DiffRowGenerator {
      * for displaying side-by-side diff.
      *
      * @param original the original text
-     * @param revised the revised text
-     * @param patch the given patch
+     * @param patch    the given patch
      * @return the DiffRows between original and revised texts
      */
     public List<DiffRow> generateDiffRows(final List<String> original, Patch<String> patch) throws DiffException {
@@ -332,7 +224,7 @@ public class DiffRowGenerator {
             }
         }
 
-        List<Delta<String>> inlineDeltas = DiffUtils.diff(origList, revList).getDeltas();
+        List<Delta<String>> inlineDeltas = DiffUtils.diff(origList, revList, 1).getDeltas();
 
         Collections.reverse(inlineDeltas);
         for (Delta<String> inlineDelta : inlineDeltas) {
@@ -391,17 +283,122 @@ public class DiffRowGenerator {
     }
 
     /**
-     * Wrap the elements in the sequence with the given tag
+     * This class used for building the DiffRowGenerator.
      *
-     * @param startPosition the position from which tag should start. The counting start from a zero.
-     * @param endPosition the position before which tag should should be closed.
-     * @param tag the tag name without angle brackets, just a word
-     * @param cssClass the optional css class
+     * @author dmitry
      */
-    public static void wrapInTag(List<String> sequence, int startPosition,
-            int endPosition, Function<Boolean, String> generator) {
-        sequence.add(startPosition, generator.apply(true));
-        sequence.add(endPosition, generator.apply(false));
+    public static class Builder {
+
+        private boolean showInlineDiffs = false;
+        private boolean ignoreWhiteSpaces = false;
+
+        private Function<Boolean, String> oldTag = f -> f ? "<span class=\"editOldInline\">" : "</span>";
+        private Function<Boolean, String> newTag = f -> f ? "<span class=\"editNewInline\">" : "</span>";
+
+        private int columnWidth = 0;
+        private boolean mergeOriginalRevised = false;
+        private boolean inlineDiffByWord = false;
+        private boolean reportLinesUnchanged = false;
+
+        private Builder() {
+        }
+
+        /**
+         * Show inline diffs in generating diff rows or not.
+         *
+         * @param val the value to set. Default: false.
+         * @return builder with configured showInlineDiff parameter
+         */
+        public Builder showInlineDiffs(boolean val) {
+            showInlineDiffs = val;
+            return this;
+        }
+
+        /**
+         * Ignore white spaces in generating diff rows or not.
+         *
+         * @param val the value to set. Default: true.
+         * @return builder with configured ignoreWhiteSpaces parameter
+         */
+        public Builder ignoreWhiteSpaces(boolean val) {
+            ignoreWhiteSpaces = val;
+            return this;
+        }
+
+        /**
+         * Give the originial old and new text lines to Diffrow without any additional processing.
+         *
+         * @param val the value to set. Default: false.
+         * @return builder with configured reportLinesUnWrapped parameter
+         */
+        public Builder reportLinesUnchanged(final boolean val) {
+            reportLinesUnchanged = val;
+            return this;
+        }
+
+        /**
+         * Generator for Old-Text-Tags.
+         *
+         * @param generator the tag to set. Without angle brackets. Default: span.
+         * @return builder with configured ignoreBlankLines parameter
+         */
+        public Builder oldTag(Function<Boolean, String> generator) {
+            this.oldTag = generator;
+            return this;
+        }
+
+        /**
+         * Generator for New-Text-Tags.
+         *
+         * @param generator
+         * @return
+         */
+        public Builder newTag(Function<Boolean, String> generator) {
+            this.newTag = generator;
+            return this;
+        }
+
+        /**
+         * Set the column with of generated lines of original and revised texts.
+         *
+         * @param width the width to set. Making it < 0 doesn't have any sense. Default 80. @return builder with config
+         *              ured ignoreBlankLines parameter
+         */
+        public Builder columnWidth(int width) {
+            if (width >= 0) {
+                columnWidth = width;
+            }
+            return this;
+        }
+
+        /**
+         * Build the DiffRowGenerator. If some parameters is not set, the default values are used.
+         *
+         * @return the customized DiffRowGenerator
+         */
+        public DiffRowGenerator build() {
+            return new DiffRowGenerator(this);
+        }
+
+        /**
+         * Merge the complete result within the original text. This makes sense for one line display.
+         *
+         * @param mergeOriginalRevised
+         * @return
+         */
+        public Builder mergeOriginalRevised(boolean mergeOriginalRevised) {
+            this.mergeOriginalRevised = mergeOriginalRevised;
+            return this;
+        }
+
+        /**
+         * Per default each character is separatly processed. This variant introduces processing by word, which should
+         * deliver no in word changes.
+         */
+        public Builder inlineDiffByWord(boolean inlineDiffByWord) {
+            this.inlineDiffByWord = inlineDiffByWord;
+            return this;
+        }
     }
 
     protected final static List<String> splitStringPreserveDelimiter(String str) {

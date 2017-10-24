@@ -17,10 +17,13 @@ package com.github.difflib.algorithm.myers;
 
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
-import static org.junit.Assert.*;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -32,7 +35,7 @@ public class MyersDiffTest {
     public void testDiffMyersExample1Forward() throws DiffException {
         List<String> original = Arrays.asList("A", "B", "C", "A", "B", "B", "A");
         List<String> revised = Arrays.asList("C", "B", "A", "B", "A", "C");
-        final Patch<String> patch = Patch.generate(original, revised, new MyersDiff<String>().diff(original, revised));
+        final Patch<String> patch = Patch.generate(original, revised, new MyersDiff<String>().diff(original, revised), 1);
         assertNotNull(patch);
         assertEquals(4, patch.getDeltas().size());
         assertEquals("Patch{deltas=[[DeleteDelta, position: 0, lines: [A, B]], [InsertDelta, position: 3, lines: [B]], [DeleteDelta, position: 5, lines: [B]], [InsertDelta, position: 7, lines: [C]]]}", patch.toString());

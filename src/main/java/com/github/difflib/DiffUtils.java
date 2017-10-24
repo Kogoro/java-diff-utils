@@ -25,19 +25,18 @@ import com.github.difflib.algorithm.myers.MyersDiff;
 import com.github.difflib.patch.Delta;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 import java.util.function.BiPredicate;
+
 import static java.util.stream.Collectors.joining;
 
 /**
  * Implements the difference and patching engine
  *
  * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
- * @version 0.4.1
+ * @author <a href="ch.sontag@gmail.com">Christopher Sontag</a>
+ * @version 0.4.2
  */
 public final class DiffUtils {
 
@@ -46,17 +45,18 @@ public final class DiffUtils {
      *
      * @param original The original text. Must not be {@code null}.
      * @param revised The revised text. Must not be {@code null}.
+     * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return The patch describing the difference between the original and revised sequences. Never {@code null}.
      */
-    public static <T> Patch<T> diff(List<T> original, List<T> revised) throws DiffException {
-        return DiffUtils.diff(original, revised, new MyersDiff<>());
+    public static <T> Patch<T> diff(List<T> original, List<T> revised, int linesBeforeAfter) throws DiffException {
+        return DiffUtils.diff(original, revised, new MyersDiff<>(), linesBeforeAfter);
     }
 
     /**
      * Computes the difference between the original and revised text.
      */
-    public static Patch<String> diff(String originalText, String revisedText) throws DiffException {
-        return DiffUtils.diff(Arrays.asList(originalText.split("\n")), Arrays.asList(revisedText.split("\n")));
+    public static Patch<String> diff(String originalText, String revisedText, int linesBeforeAfter) throws DiffException {
+        return DiffUtils.diff(Arrays.asList(originalText.split("\n")), Arrays.asList(revisedText.split("\n")), linesBeforeAfter);
     }
 
     /**
@@ -67,15 +67,16 @@ public final class DiffUtils {
      *
      * @param equalizer the equalizer object to replace the default compare algorithm (Object.equals). If {@code null}
      * the default equalizer of the default algorithm is used..
+     * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return The patch describing the difference between the original and revised sequences. Never {@code null}.
      */
     public static <T> Patch<T> diff(List<T> original, List<T> revised,
-            BiPredicate<T, T> equalizer) throws DiffException {
+            BiPredicate<T, T> equalizer, int linesBeforeAfter) throws DiffException {
         if (equalizer != null) {
             return DiffUtils.diff(original, revised,
-                    new MyersDiff<>(equalizer));
+                    new MyersDiff<>(equalizer), linesBeforeAfter);
         }
-        return DiffUtils.diff(original, revised, new MyersDiff<>());
+        return DiffUtils.diff(original, revised, new MyersDiff<>(), linesBeforeAfter);
     }
 
     /**
@@ -84,15 +85,16 @@ public final class DiffUtils {
      * @param original The original text. Must not be {@code null}.
      * @param revised The revised text. Must not be {@code null}.
      * @param algorithm The diff algorithm. Must not be {@code null}.
+     * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return The patch describing the difference between the original and revised sequences. Never {@code null}.
      */
     public static <T> Patch<T> diff(List<T> original, List<T> revised,
-            DiffAlgorithm<T> algorithm) throws DiffException {
-        Objects.requireNonNull(original, "original must not be null");
-        Objects.requireNonNull(revised, "revised must not be null");
-        Objects.requireNonNull(algorithm, "algorithm must not be null");
+            DiffAlgorithm<T> algorithm, int linesBeforeAfter) throws DiffException {
+        Objects.requireNonNull(original,"original must not be null");
+        Objects.requireNonNull(revised,"revised must not be null");
+        Objects.requireNonNull(algorithm,"algorithm must not be null");
 
-        return Patch.generate(original, revised, algorithm.diff(original, revised));
+        return Patch.generate(original, revised, algorithm.diff(original, revised), linesBeforeAfter);
     }
 
     /**
@@ -101,9 +103,10 @@ public final class DiffUtils {
      *
      * @param original
      * @param revised
+     * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return
      */
-    public static Patch<String> diffInline(String original, String revised) throws DiffException {
+    public static Patch<String> diffInline(String original, String revised, int linesBeforeAfter) throws DiffException {
         List<String> origList = new ArrayList<>();
         List<String> revList = new ArrayList<>();
         for (Character character : original.toCharArray()) {
@@ -112,7 +115,7 @@ public final class DiffUtils {
         for (Character character : revised.toCharArray()) {
             revList.add(character.toString());
         }
-        Patch<String> patch = DiffUtils.diff(origList, revList);
+        Patch<String> patch = DiffUtils.diff(origList, revList, linesBeforeAfter);
         for (Delta<String> delta : patch.getDeltas()) {
             delta.getOriginal().setLines(compressLines(delta.getOriginal().getLines(), ""));
             delta.getRevised().setLines(compressLines(delta.getRevised().getLines(), ""));

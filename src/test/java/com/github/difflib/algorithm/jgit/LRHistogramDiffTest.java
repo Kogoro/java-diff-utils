@@ -15,20 +15,19 @@
  */
 package com.github.difflib.algorithm.jgit;
 
-import static com.github.difflib.DiffUtilsTest.readStringListFromInputStream;
 import com.github.difflib.TestConstants;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
+import org.junit.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipFile;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static com.github.difflib.DiffUtilsTest.readStringListFromInputStream;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -61,8 +60,8 @@ public class LRHistogramDiffTest {
         List<String> original = readStringListFromInputStream(zip.getInputStream(zip.getEntry("ta")));
         List<String> revised = readStringListFromInputStream(zip.getInputStream(zip.getEntry("tb")));
 
-        Patch<String> patch = Patch.generate(original, revised, new HistogramDiff().diff(original, revised));
-
+        Patch<String> patch = Patch.generate(original, revised, new HistogramDiff().diff(original, revised), 1);
+        
         assertEquals(34, patch.getDeltas().size());
 
         List<String> created = patch.applyTo(original);

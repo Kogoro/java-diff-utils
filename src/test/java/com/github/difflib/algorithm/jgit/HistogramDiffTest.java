@@ -18,14 +18,13 @@ package com.github.difflib.algorithm.jgit;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
+import org.junit.*;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -59,7 +58,7 @@ public class HistogramDiffTest {
     public void testDiff() throws DiffException, PatchFailedException {
         List<String> orgList = Arrays.asList("A", "B", "C", "A", "B", "B", "A");
         List<String> revList = Arrays.asList("C", "B", "A", "B", "A", "C");
-        final Patch<String> patch = Patch.generate(orgList, revList, new HistogramDiff().diff(orgList, revList));
+        final Patch<String> patch = Patch.generate(orgList, revList, new HistogramDiff().diff(orgList, revList), 1);
         System.out.println(patch);
         assertNotNull(patch);
         assertEquals(3, patch.getDeltas().size());

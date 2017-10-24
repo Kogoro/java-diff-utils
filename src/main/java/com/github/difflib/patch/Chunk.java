@@ -19,6 +19,7 @@ limitations under the License.
  */
 package com.github.difflib.patch;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,14 +31,17 @@ import java.util.List;
  * fact, arrays or lists of any type that implements {@link java.lang.Object#hashCode hashCode()} and
  * {@link java.lang.Object#equals equals()} correctly can be subject to differencing using this library.
  * </p>
+ * T The type of the compared elements in the 'lines'.
  *
- * @author <a href="dm.naumenko@gmail.com>Dmitry Naumenko</a>
- * @param T The type of the compared elements in the 'lines'.
+ * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
+ * @author <a href="ch.sontag@gmail.com">Christopher Sontag</a>
  */
 public final class Chunk<T> {
 
     private final int position;
     private List<T> lines;
+    private List<T> before = new ArrayList<>();
+    private List<T> after = new ArrayList<>();
 
     /**
      * Creates a chunk and saves a copy of affected lines
@@ -107,6 +111,28 @@ public final class Chunk<T> {
         return getPosition() + size() - 1;
     }
 
+    /**
+     * @return the lines before the affected lines
+     */
+    public List<T> getBefore() {
+        return before;
+    }
+
+    public void setBefore(List<T> before) {
+        this.before = before;
+    }
+
+    /**
+     * @return the lines after the affected lines
+     */
+    public List<T> getAfter() {
+        return after;
+    }
+
+    public void setAfter(List<T> after) {
+        this.after = after;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -146,6 +172,8 @@ public final class Chunk<T> {
         } else if (!lines.equals(other.lines)) {
             return false;
         }
+        if (!before.equals(other.before)) return false;
+        if (!after.equals(other.after)) return false;
         return position == other.position;
     }
 
