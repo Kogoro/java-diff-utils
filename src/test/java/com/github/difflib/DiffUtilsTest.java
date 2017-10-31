@@ -22,6 +22,14 @@ import static org.junit.Assert.*;
 
 public class DiffUtilsTest {
 
+    public static List<String> readStringListFromInputStream(InputStream is) throws IOException {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is, Charset.forName(StandardCharsets.UTF_8.name())))) {
+
+            return reader.lines().collect(toList());
+        }
+    }
+
     @Test
     public void testDiff_Insert() throws DiffException {
         final Patch<String> patch = DiffUtils.diff(Arrays.asList("hhh"), Arrays.
@@ -220,20 +228,12 @@ public class DiffUtilsTest {
     @Ignore
     public void testPossibleDiffHangOnLargeDatasetDnaumenkoIssue26() throws IOException, DiffException {
         ZipFile zip = new ZipFile(TestConstants.MOCK_FOLDER + "/large_dataset1.zip");
-        
+
         Patch<String> patch = DiffUtils.diff(
                 readStringListFromInputStream(zip.getInputStream(zip.getEntry("ta"))),
                 readStringListFromInputStream(zip.getInputStream(zip.getEntry("tb"))), 1);
 
         assertEquals(1, patch.getDeltas().size());
-    }
-
-    public static List<String> readStringListFromInputStream(InputStream is) throws IOException {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, Charset.forName(StandardCharsets.UTF_8.name())))) {
-
-            return reader.lines().collect(toList());
-        }
     }
 
     @Test

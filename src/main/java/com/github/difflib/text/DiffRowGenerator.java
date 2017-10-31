@@ -41,8 +41,8 @@ import java.util.regex.Pattern;
  * These values are: showInlineDiffs = false; ignoreWhiteSpaces = true; ignoreBlankLines = true; ...
  * <p>
  * For instantiating the DiffRowGenerator you should use the its builder. Like in example  <code>
- *    DiffRowGenerator generator = new DiffRowGenerator.Builder().showInlineDiffs(true).
- *      ignoreWhiteSpaces(true).columnWidth(100).build();
+ * DiffRowGenerator generator = new DiffRowGenerator.Builder().showInlineDiffs(true).
+ * ignoreWhiteSpaces(true).columnWidth(100).build();
  * </code>
  */
 public class DiffRowGenerator {

@@ -26,10 +26,10 @@ import java.util.List;
 /**
  * Holds the information about the part of text involved in the diff process
  * <p>
- * <p>
- * Text is represented as <code>Object[]</code> because the diff engine is capable of handling more than plain ascci. In
- * fact, arrays or lists of any type that implements {@link java.lang.Object#hashCode hashCode()} and
- * {@link java.lang.Object#equals equals()} correctly can be subject to differencing using this library.
+ * Text is represented as <code>Object[]</code> because the diff engine is capable of handling more
+ * than plain ascci. In fact, arrays or lists of any type that implements
+ * {@link java.lang.Object#hashCode hashCode()} and {@link java.lang.Object#equals equals()}
+ * correctly can be subject to differencing using this library.
  * </p>
  * T The type of the compared elements in the 'lines'.
  *
