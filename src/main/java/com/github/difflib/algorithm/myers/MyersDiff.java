@@ -25,6 +25,7 @@ import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.algorithm.DifferentiationFailedException;
 import com.github.difflib.patch.DeltaType;
 import com.github.difflib.patch.Patch;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +50,7 @@ public final class MyersDiff<T> implements DiffAlgorithm<T> {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Return empty diff if get the error while procession the difference.
      */
     @Override
@@ -66,7 +67,7 @@ public final class MyersDiff<T> implements DiffAlgorithm<T> {
      * to Gene Myers differencing algorithm.
      *
      * @param orig The original sequence.
-     * @param rev The revised sequence.
+     * @param rev  The revised sequence.
      * @return A minimum {@link PathNode Path} accross the differences graph.
      * @throws DifferentiationFailedException if a diff path could not be found.
      */
@@ -131,11 +132,10 @@ public final class MyersDiff<T> implements DiffAlgorithm<T> {
     /**
      * Constructs a {@link Patch} from a difference path.
      *
-     * @param path The path.
-     * @param orig The original sequence.
-     * @param rev The revised sequence.
+     * @param actualPath The path.
+     * @param orig       The original sequence.
+     * @param rev        The revised sequence.
      * @return A {@link Patch} script corresponding to the path.
-     * @throws DifferentiationFailedException if a {@link Patch} could not be built from the given path.
      */
     private List<Change> buildRevision(PathNode actualPath, List<T> orig, List<T> rev) {
         Objects.requireNonNull(actualPath, "path is null");

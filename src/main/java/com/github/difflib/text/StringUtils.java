@@ -20,6 +20,7 @@ limitations under the License.
 package com.github.difflib.text;
 
 import java.util.List;
+
 import static java.util.stream.Collectors.toList;
 
 final class StringUtils {
@@ -53,7 +54,7 @@ final class StringUtils {
     /**
      * Wrap the text with the given column width
      *
-     * @param line the text
+     * @param line        the text
      * @param columnWidth the given column
      * @return the wrapped text
      */

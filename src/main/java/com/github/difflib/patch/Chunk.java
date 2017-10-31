@@ -81,12 +81,14 @@ public final class Chunk<T> {
             }
         }
         for (int i = 0; i < before.size(); i++) {
-            if (!before.get(i).equals(target.get(position - before.size() + i)))
+            if (!before.get(i).equals(target.get(position - before.size() + i))) {
                 throw new PatchFailedException("Incorrect Chunk: the chunk's surroundings (before) doesn't match the target");
+            }
         }
         for (int i = 0; i < after.size(); i++) {
-            if (!after.get(i).equals(target.get(last() + after.size() - i)))
+            if (!after.get(i).equals(target.get(last() + after.size() - i))) {
                 throw new PatchFailedException("Incorrect Chunk: the chunk's surroundings (after) doesn't match the target");
+            }
         }
     }
 

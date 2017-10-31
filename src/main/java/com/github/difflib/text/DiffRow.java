@@ -72,7 +72,7 @@ public final class DiffRow implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -87,7 +87,7 @@ public final class DiffRow implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -117,9 +117,7 @@ public final class DiffRow implements Serializable {
             return false;
         }
         if (tag == null) {
-            if (other.tag != null) {
-                return false;
-            }
+            return other.tag == null;
         } else if (!tag.equals(other.tag)) {
             return false;
         }

@@ -24,9 +24,10 @@ import java.util.Objects;
 
 /**
  * Describes the delta between original and revised texts.
+ * <p>
+ * T The type of the compared elements in the 'lines'.
  *
  * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
- * @param T The type of the compared elements in the 'lines'.
  */
 public abstract class Delta<T> {
 
@@ -38,7 +39,7 @@ public abstract class Delta<T> {
      * Construct the delta for original and revised chunks
      *
      * @param original Chunk describing the original text. Must not be {@code null}.
-     * @param revised Chunk describing the revised text. Must not be {@code null}.
+     * @param revised  Chunk describing the revised text. Must not be {@code null}.
      */
     public Delta(DeltaType deltaType, Chunk<T> original, Chunk<T> revised) {
         Objects.requireNonNull(deltaType, "deltaType must not be null");
@@ -133,7 +134,9 @@ public abstract class Delta<T> {
         }
         if (revised == null) {
             return other.revised == null;
-        } else return revised.equals(other.revised);
+        } else {
+            return revised.equals(other.revised);
+        }
     }
 
 }

@@ -5,6 +5,7 @@ import com.github.difflib.TestConstants;
 import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

@@ -18,7 +18,6 @@ package com.github.difflib.algorithm;
 import com.github.difflib.patch.DeltaType;
 
 /**
- *
  * @author toben
  */
 public class Change {

@@ -17,7 +17,6 @@ package com.github.difflib.patch;
 
 /**
  * Specifies the type of the delta.
- *
  */
 public enum DeltaType {
     /**

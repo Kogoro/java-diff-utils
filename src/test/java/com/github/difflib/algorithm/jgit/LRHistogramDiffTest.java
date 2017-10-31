@@ -30,7 +30,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
  * @author toben
  */
 public class LRHistogramDiffTest {
@@ -61,7 +60,7 @@ public class LRHistogramDiffTest {
         List<String> revised = readStringListFromInputStream(zip.getInputStream(zip.getEntry("tb")));
 
         Patch<String> patch = Patch.generate(original, revised, new HistogramDiff().diff(original, revised), 1);
-        
+
         assertEquals(34, patch.getDeltas().size());
 
         List<String> created = patch.applyTo(original);

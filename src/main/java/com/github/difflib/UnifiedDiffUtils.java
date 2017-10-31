@@ -19,13 +19,13 @@ import com.github.difflib.patch.ChangeDelta;
 import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.Delta;
 import com.github.difflib.patch.Patch;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author toben
  */
 public final class UnifiedDiffUtils {
@@ -130,17 +130,17 @@ public final class UnifiedDiffUtils {
      * generateUnifiedDiff takes a Patch and some other arguments, returning the Unified Diff format text representing
      * the Patch.
      *
-     * @param original - Filename of the original (unrevised file)
-     * @param revised - Filename of the revised file
+     * @param original      - Filename of the original (unrevised file)
+     * @param revised       - Filename of the revised file
      * @param originalLines - Lines of the original file
-     * @param patch - Patch created by the diff() function
-     * @param contextSize - number of lines of context output around each difference in the file.
+     * @param patch         - Patch created by the diff() function
+     * @param contextSize   - number of lines of context output around each difference in the file.
      * @return List of strings representing the Unified Diff representation of the Patch argument.
      * @author Bill James (tankerbay@gmail.com)
      */
     public static List<String> generateUnifiedDiff(String original,
-            String revised, List<String> originalLines, Patch<String> patch,
-            int contextSize) {
+                                                   String revised, List<String> originalLines, Patch<String> patch,
+                                                   int contextSize) {
         if (!patch.getDeltas().isEmpty()) {
             List<String> ret = new ArrayList<>();
             ret.add("--- " + original);
@@ -200,14 +200,14 @@ public final class UnifiedDiffUtils {
     /**
      * processDeltas takes a list of Deltas and outputs them together in a single block of Unified-Diff-format text.
      *
-     * @param origLines - the lines of the original file
-     * @param deltas - the Deltas to be output as a single block
+     * @param origLines   - the lines of the original file
+     * @param deltas      - the Deltas to be output as a single block
      * @param contextSize - the number of lines of context to place around block
      * @return
      * @author Bill James (tankerbay@gmail.com)
      */
     private static List<String> processDeltas(List<String> origLines,
-            List<Delta<String>> deltas, int contextSize) {
+                                              List<Delta<String>> deltas, int contextSize) {
         List<String> buffer = new ArrayList<>();
         int origTotal = 0; // counter for total lines output from Original
         int revTotal = 0; // counter for total lines output from Original
@@ -275,7 +275,7 @@ public final class UnifiedDiffUtils {
 
         // Create and insert the block header, conforming to the Unified Diff
         // standard
-        StringBuffer header = new StringBuffer();
+        StringBuilder header = new StringBuilder();
         header.append("@@ -");
         header.append(origStart);
         header.append(",");

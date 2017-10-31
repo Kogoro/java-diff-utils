@@ -22,7 +22,6 @@ package com.github.difflib.patch;
 import com.github.difflib.algorithm.Change;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -30,8 +29,9 @@ import static java.util.Comparator.comparing;
 
 /**
  * Describes the patch holding all deltas between the original and revised texts.
- *
+ * <p>
  * T The type of the compared elements in the 'lines'.
+ *
  * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
  * @author <a href="ch.sontag@gmail.com">Christopher Sontag</a>
  */
@@ -94,7 +94,7 @@ public final class Patch<T> {
      * @return the deltas
      */
     public List<Delta<T>> getDeltas() {
-        Collections.sort(deltas, comparing(d -> d.getOriginal().getPosition()));
+        deltas.sort(comparing(d -> d.getOriginal().getPosition()));
         return deltas;
     }
 

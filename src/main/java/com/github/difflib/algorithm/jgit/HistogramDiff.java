@@ -19,13 +19,14 @@ import com.github.difflib.algorithm.Change;
 import com.github.difflib.algorithm.DiffAlgorithm;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.DeltaType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.diff.EditList;
 import org.eclipse.jgit.diff.Sequence;
 import org.eclipse.jgit.diff.SequenceComparator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * HistorgramDiff using JGit - Library. This one is much more performant than the orginal Myers implementation.

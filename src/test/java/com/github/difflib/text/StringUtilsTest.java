@@ -15,12 +15,13 @@
  */
 package com.github.difflib.text;
 
-import java.util.Collections;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- *
  * @author tw
  */
 public class StringUtilsTest {

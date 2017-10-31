@@ -43,8 +43,8 @@ public final class DiffUtils {
     /**
      * Computes the difference between the original and revised list of elements with default diff algorithm
      *
-     * @param original The original text. Must not be {@code null}.
-     * @param revised The revised text. Must not be {@code null}.
+     * @param original         The original text. Must not be {@code null}.
+     * @param revised          The revised text. Must not be {@code null}.
      * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return The patch describing the difference between the original and revised sequences. Never {@code null}.
      */
@@ -62,16 +62,15 @@ public final class DiffUtils {
     /**
      * Computes the difference between the original and revised list of elements with default diff algorithm
      *
-     * @param original The original text. Must not be {@code null}.
-     * @param revised The revised text. Must not be {@code null}.
-     *
-     * @param equalizer the equalizer object to replace the default compare algorithm (Object.equals). If {@code null}
-     * the default equalizer of the default algorithm is used..
+     * @param original         The original text. Must not be {@code null}.
+     * @param revised          The revised text. Must not be {@code null}.
+     * @param equalizer        the equalizer object to replace the default compare algorithm (Object.equals). If {@code null}
+     *                         the default equalizer of the default algorithm is used..
      * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return The patch describing the difference between the original and revised sequences. Never {@code null}.
      */
     public static <T> Patch<T> diff(List<T> original, List<T> revised,
-            BiPredicate<T, T> equalizer, int linesBeforeAfter) throws DiffException {
+                                    BiPredicate<T, T> equalizer, int linesBeforeAfter) throws DiffException {
         if (equalizer != null) {
             return DiffUtils.diff(original, revised,
                     new MyersDiff<>(equalizer), linesBeforeAfter);
@@ -82,17 +81,17 @@ public final class DiffUtils {
     /**
      * Computes the difference between the original and revised list of elements with default diff algorithm
      *
-     * @param original The original text. Must not be {@code null}.
-     * @param revised The revised text. Must not be {@code null}.
-     * @param algorithm The diff algorithm. Must not be {@code null}.
+     * @param original         The original text. Must not be {@code null}.
+     * @param revised          The revised text. Must not be {@code null}.
+     * @param algorithm        The diff algorithm. Must not be {@code null}.
      * @param linesBeforeAfter - Amount of lines for before and after chunk content
      * @return The patch describing the difference between the original and revised sequences. Never {@code null}.
      */
     public static <T> Patch<T> diff(List<T> original, List<T> revised,
-            DiffAlgorithm<T> algorithm, int linesBeforeAfter) throws DiffException {
-        Objects.requireNonNull(original,"original must not be null");
-        Objects.requireNonNull(revised,"revised must not be null");
-        Objects.requireNonNull(algorithm,"algorithm must not be null");
+                                    DiffAlgorithm<T> algorithm, int linesBeforeAfter) throws DiffException {
+        Objects.requireNonNull(original, "original must not be null");
+        Objects.requireNonNull(revised, "revised must not be null");
+        Objects.requireNonNull(algorithm, "algorithm must not be null");
 
         return Patch.generate(original, revised, algorithm.diff(original, revised), linesBeforeAfter);
     }
@@ -134,7 +133,7 @@ public final class DiffUtils {
      * Patch the original text with given patch
      *
      * @param original the original text
-     * @param patch the given patch
+     * @param patch    the given patch
      * @return the revised text
      * @throws PatchFailedException if can't apply patch
      */
@@ -147,7 +146,7 @@ public final class DiffUtils {
      * Unpatch the revised text for a given patch
      *
      * @param revised the revised text
-     * @param patch the given patch
+     * @param patch   the given patch
      * @return the original text
      */
     public static <T> List<T> unpatch(List<T> revised, Patch<T> patch) {

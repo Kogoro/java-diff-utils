@@ -23,10 +23,6 @@ package com.github.difflib.algorithm.myers;
  * A node in a diffpath.
  *
  * @author <a href="mailto:juanco@suigeneris.org">Juanco Anez</a>
- *
- * @see DiffNode
- * @see Snake
- *
  */
 public final class PathNode {
 
@@ -50,8 +46,8 @@ public final class PathNode {
     /**
      * Concatenates a new path node with an existing diffpath.
      *
-     * @param i The position in the original sequence for the new node.
-     * @param j The position in the revised sequence for the new node.
+     * @param i    The position in the original sequence for the new node.
+     * @param j    The position in the revised sequence for the new node.
      * @param prev The previous node in the path.
      */
     public PathNode(int i, int j, boolean snake, boolean bootstrap, PathNode prev) {
@@ -82,10 +78,10 @@ public final class PathNode {
     }
 
     /**
-     * Skips sequences of {@link DiffNode DiffNodes} until a {@link Snake} or bootstrap node is found, or the end of the
+     * Skips sequences of {@link PathNode PathNode} until a snake or bootstrap node is found, or the end of the
      * path is reached.
      *
-     * @return The next first {@link Snake} or bootstrap node in the path, or <code>null</code> if none found.
+     * @return The next first snake or bootstrap node in the path, or <code>null</code> if none found.
      */
     public final PathNode previousSnake() {
         if (isBootstrap()) {
