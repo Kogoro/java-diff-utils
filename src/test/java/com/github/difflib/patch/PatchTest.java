@@ -7,8 +7,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class PatchTest {
 
@@ -48,6 +47,29 @@ public class PatchTest {
             assertEquals(changeTest_to, DiffUtils.patch(changeTest_from, patch));
         } catch (PatchFailedException e) {
             fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testPatch_ChunkVerify() throws DiffException {
+        final List<String> changeTest_from = Arrays.asList("aaa", "ddd");
+        final List<String> changeTest_to = Arrays.asList("aaa", "bbb", "ccc", "ddd");
+
+        final Patch<String> patchOne = DiffUtils.diff(changeTest_from, changeTest_to, 1);
+        assertTrue(patchOne.getDeltas().size() > 0);
+        final Patch<String> patchTwo = DiffUtils.diff(changeTest_from, changeTest_to, 1);
+        assertTrue(patchTwo.getDeltas().size() > 0);
+
+        for (Delta<String> deltaOne : patchOne.getDeltas()) {
+            for (Delta<String> deltaTwo : patchTwo.getDeltas()) {
+                PatchFailedException exception = null;
+                try {
+                    deltaOne.verify(deltaTwo);
+                } catch (PatchFailedException e) {
+                    exception = e;
+                }
+                assertTrue(exception != null);
+            }
         }
     }
 }

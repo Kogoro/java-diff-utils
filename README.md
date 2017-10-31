@@ -52,6 +52,9 @@ But it can easily replaced by any other which is better for handing your texts. 
 ### Changelog ###
   * Version 2.2-SNAPSHOT
     * Added chunk to support surroundings of differences
+    * Verify also looks at surroundings
+    * Deltas now can proof if another delta change the same chunk
+    * Chunks now can proof if another chunk change the same positions
   * Version 2.1-SNAPSHOT
     * included checkstyle source code conventions
   * Version 2.0

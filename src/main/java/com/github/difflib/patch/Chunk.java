@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * Holds the information about the part of text involved in the diff process
- *
+ * <p>
  * <p>
  * Text is represented as <code>Object[]</code> because the diff engine is capable of handling more than plain ascci. In
  * fact, arrays or lists of any type that implements {@link java.lang.Object#hashCode hashCode()} and
@@ -47,7 +47,7 @@ public final class Chunk<T> {
      * Creates a chunk and saves a copy of affected lines
      *
      * @param position the start position
-     * @param lines the affected lines
+     * @param lines    the affected lines
      */
     public Chunk(int position, List<T> lines) {
         this.position = position;
@@ -58,7 +58,7 @@ public final class Chunk<T> {
      * Creates a chunk and saves a copy of affected lines
      *
      * @param position the start position
-     * @param lines the affected lines
+     * @param lines    the affected lines
      */
     public Chunk(int position, T[] lines) {
         this.position = position;
@@ -79,6 +79,26 @@ public final class Chunk<T> {
                 throw new PatchFailedException(
                         "Incorrect Chunk: the chunk content doesn't match the target");
             }
+        }
+        for (int i = 0; i < before.size(); i++) {
+            if (!before.get(i).equals(target.get(position - before.size() + i)))
+                throw new PatchFailedException("Incorrect Chunk: the chunk's surroundings (before) doesn't match the target");
+        }
+        for (int i = 0; i < after.size(); i++) {
+            if (!after.get(i).equals(target.get(last() + after.size() - i)))
+                throw new PatchFailedException("Incorrect Chunk: the chunk's surroundings (after) doesn't match the target");
+        }
+    }
+
+    /**
+     * Verifies that this chunk does not affect the same positions as the given chunk.
+     *
+     * @param other the chunk to be proof against this chunk.
+     * @throws PatchFailedException if both deltas affect the same chunk.
+     */
+    public void verify(Chunk<T> other) throws PatchFailedException {
+        if (Math.max(last(), other.last()) - Math.min(getPosition(), other.getPosition()) < (size() + other.size())) {
+            throw new PatchFailedException("Multiple chunks would override the same target position");
         }
     }
 
@@ -135,7 +155,7 @@ public final class Chunk<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -150,7 +170,7 @@ public final class Chunk<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -172,14 +192,12 @@ public final class Chunk<T> {
         } else if (!lines.equals(other.lines)) {
             return false;
         }
-        if (!before.equals(other.before)) return false;
-        if (!after.equals(other.after)) return false;
-        return position == other.position;
+        return before.equals(other.before) && after.equals(other.after) && position == other.position;
     }
 
     @Override
     public String toString() {
-        return "[position: " + position + ", size: " + size() + ", lines: " + lines + "]";
+        return "[position: " + position + ", size: " + size() + ", lines: " + lines + ", before: " + before + ", after: " + after + "]";
     }
 
 }

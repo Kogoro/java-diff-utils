@@ -19,7 +19,8 @@ limitations under the License.
  */
 package com.github.difflib.patch;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Describes the delta between original and revised texts.
@@ -60,10 +61,20 @@ public abstract class Delta<T> {
     }
 
     /**
+     * Verifies that this delta does not affect the same chunk as the given delta.
+     *
+     * @param delta the delta to be proof against this delta.
+     * @throws PatchFailedException if both deltas affect the same chunk.
+     */
+    public void verify(Delta<T> delta) throws PatchFailedException {
+        getOriginal().verify(delta.getOriginal());
+    }
+
+    /**
      * Applies this delta as the patch for a given target
      *
      * @param target the given target
-     * @throws PatchFailedException
+     * @throws PatchFailedException if a error occured
      */
     public abstract void applyTo(List<T> target) throws PatchFailedException;
 
@@ -121,13 +132,8 @@ public abstract class Delta<T> {
             return false;
         }
         if (revised == null) {
-            if (other.revised != null) {
-                return false;
-            }
-        } else if (!revised.equals(other.revised)) {
-            return false;
-        }
-        return true;
+            return other.revised == null;
+        } else return revised.equals(other.revised);
     }
 
 }
