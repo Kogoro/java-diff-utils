@@ -24,14 +24,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Holds the information about the part of text involved in the diff process
- * <p>
- * Text is represented as <code>Object[]</code> because the diff engine is capable of handling more
- * than plain ascci. In fact, arrays or lists of any type that implements
- * {@link java.lang.Object#hashCode hashCode()} and {@link java.lang.Object#equals equals()}
- * correctly can be subject to differencing using this library.
- * </p>
- * T The type of the compared elements in the 'lines'.
+ * Holds the information about the part of text involved in the diff process <p> Text is represented as <code>Object[]</code> because the diff engine is capable
+ * of handling more than plain ascci. In fact, arrays or lists of any type that implements {@link java.lang.Object#hashCode hashCode()} and
+ * {@link java.lang.Object#equals equals()} correctly can be subject to differencing using this library. </p> T The type of the compared elements in the
+ * 'lines'.
  *
  * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
  * @author <a href="ch.sontag@gmail.com">Christopher Sontag</a>
@@ -76,17 +72,16 @@ public final class Chunk<T> {
         }
         for (int i = 0; i < size(); i++) {
             if (!target.get(position + i).equals(lines.get(i))) {
-                throw new PatchFailedException(
-                        "Incorrect Chunk: the chunk content doesn't match the target");
+                throw new PatchFailedException("Incorrect Chunk: the chunk content doesn't match the target");
             }
         }
-        for (int i = 0; i < before.size(); i++) {
-            if (!before.get(i).equals(target.get(position - before.size() + i))) {
+        for (int i = before.size(); i > 0; i--) {
+            if (!before.get(before.size() - i).equals(target.get(position - i))) {
                 throw new PatchFailedException("Incorrect Chunk: the chunk's surroundings (before) doesn't match the target");
             }
         }
         for (int i = 0; i < after.size(); i++) {
-            if (!after.get(i).equals(target.get(last() + after.size() - i))) {
+            if (!after.get(i).equals(target.get(last() + i + 1))) {
                 throw new PatchFailedException("Incorrect Chunk: the chunk's surroundings (after) doesn't match the target");
             }
         }
@@ -157,7 +152,6 @@ public final class Chunk<T> {
 
     /*
      * (non-Javadoc)
-     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -172,7 +166,6 @@ public final class Chunk<T> {
 
     /*
      * (non-Javadoc)
-     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

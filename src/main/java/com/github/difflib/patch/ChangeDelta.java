@@ -22,9 +22,7 @@ package com.github.difflib.patch;
 import java.util.List;
 
 /**
- * Describes the change-delta between original and revised texts.
- * <p>
- * T The type of the compared elements in the 'lines'.
+ * Describes the change-delta between original and revised texts. <p> T The type of the compared elements in the 'lines'.
  *
  * @author <a href="dm.naumenko@gmail.com">Dmitry Naumenko</a>
  */
@@ -71,7 +69,6 @@ public final class ChangeDelta<T> extends Delta<T> {
 
     @Override
     public String toString() {
-        return "[ChangeDelta, position: " + getOriginal().getPosition() + ", lines: "
-                + getOriginal().getLines() + " to " + getRevised().getLines() + "]";
+        return "[ChangeDelta, position: " + getOriginal().getPosition() + ", lines: " + getOriginal().getLines() + " to " + getRevised().getLines() + "]";
     }
 }
